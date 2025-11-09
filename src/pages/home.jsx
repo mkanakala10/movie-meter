@@ -1,13 +1,16 @@
 import { useState } from 'react';
-import { Box, Container, SimpleGrid } from '@chakra-ui/react';
+import { Box, Container } from '@chakra-ui/react';
 import Hero from '../components/Hero';
 import SectionHeader from '../components/SectionHeader';
 import ActorCard from '../components/ActorCard';
 import MovieCard from '../components/MovieCard';
 import CTA from '../components/CTA';
+import Navbar from '../components/Navbar';
 
 function Home() {
-    // Placeholder data - will be replaced with API calls later
+    const [isNavOpen, setIsNavOpen] = useState(false);
+    const [currentPage, setCurrentPage] = useState('home');
+
     const [trendingActors] = useState([
         { id: 1, name: 'Rajkummar Rao', image: 'https://via.placeholder.com/200x300?text=Rajkummar+Rao', trendingScore: 95 },
         { id: 2, name: 'Alia Bhatt', image: 'https://via.placeholder.com/200x300?text=Alia+Bhatt', trendingScore: 92 },
@@ -37,23 +40,15 @@ function Home() {
         { value: '1M+', label: 'User Reviews' },
     ];
 
-    const handleViewDetails = (movieId) => {
-        console.log('View details for movie:', movieId);
-        // TODO: Navigate to movie detail page
-    };
-
-    const handleAddToWatchlist = (filmId) => {
-        console.log('Add to watchlist:', filmId);
-        // TODO: Add to watchlist
-    };
-
-    const handleSetReminder = (filmId) => {
-        console.log('Set reminder for:', filmId);
-        // TODO: Set reminder
-    };
-
     return (
         <Box minH="100vh" bg="white" color="black">
+            <Navbar
+                isOpen={isNavOpen}
+                onToggle={() => setIsNavOpen(!isNavOpen)}
+                currentPage={currentPage}
+                onNavigate={setCurrentPage}
+            />
+            
             <Hero stats={heroStats} />
 
             {/* Trending Actors Section */}
@@ -63,11 +58,18 @@ function Home() {
                         title="Trending Actors" 
                         subtitle="Most popular actors based on real-time engagement" 
                     />
-                    <SimpleGrid columns={{ base: 2, sm: 3, md: 4, lg: 5 }} spacing={8}>
+                    <Box 
+                        display="grid" 
+                        gridTemplateColumns={{ base: "repeat(2, 1fr)", sm: "repeat(3, 1fr)", md: "repeat(4, 1fr)", lg: "repeat(5, 1fr)" }}
+                        gap="2px"
+                        justifyItems="center"
+                    >
                         {trendingActors.map((actor) => (
-                            <ActorCard key={actor.id} actor={actor} />
+                            <Box key={actor.id} w="100%" maxW="220px">
+                                <ActorCard actor={actor} />
+                            </Box>
                         ))}
-                    </SimpleGrid>
+                    </Box>
                 </Container>
             </Box>
 
@@ -78,16 +80,18 @@ function Home() {
                         title="Box Office Leaders" 
                         subtitle="Top grossing Indian films of all time" 
                     />
-                    <SimpleGrid columns={{ base: 1, sm: 2, md: 3, lg: 4, xl: 5 }} spacing={8}>
+                    <Box 
+                        display="grid" 
+                        gridTemplateColumns={{ base: "repeat(1, 1fr)", sm: "repeat(2, 1fr)", md: "repeat(3, 1fr)", lg: "repeat(4, 1fr)", xl: "repeat(5, 1fr)" }}
+                        gap="2px"
+                        justifyItems="center"
+                    >
                         {boxOfficeLeaders.map((movie, index) => (
-                            <MovieCard
-                                key={movie.id}
-                                movie={movie}
-                                rank={index + 1}
-                                onViewDetails={() => handleViewDetails(movie.id)}
-                            />
+                            <Box key={movie.id} w="100%" maxW="220px">
+                                <MovieCard movie={movie} rank={index + 1} />
+                            </Box>
                         ))}
-                    </SimpleGrid>
+                    </Box>
                 </Container>
             </Box>
 
@@ -98,17 +102,18 @@ function Home() {
                         title="Upcoming Releases" 
                         subtitle="Most anticipated films coming soon" 
                     />
-                    <SimpleGrid columns={{ base: 1, sm: 2, md: 3, lg: 4 }} spacing={8}>
+                    <Box 
+                        display="grid" 
+                        gridTemplateColumns={{ base: "repeat(1, 1fr)", sm: "repeat(2, 1fr)", md: "repeat(3, 1fr)", lg: "repeat(4, 1fr)" }}
+                        gap="2px"
+                        justifyItems="center"
+                    >
                         {upcomingFilms.map((film) => (
-                            <MovieCard
-                                key={film.id}
-                                movie={film}
-                                variant="upcoming"
-                                onAddToWatchlist={() => handleAddToWatchlist(film.id)}
-                                onSetReminder={() => handleSetReminder(film.id)}
-                            />
+                            <Box key={film.id} w="100%" maxW="220px">
+                                <MovieCard movie={film} variant="upcoming" />
+                            </Box>
                         ))}
-                    </SimpleGrid>
+                    </Box>
                 </Container>
             </Box>
 

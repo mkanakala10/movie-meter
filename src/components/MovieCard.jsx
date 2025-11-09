@@ -1,26 +1,24 @@
-import { useState } from 'react';
-import { Box, VStack, HStack, Text, Badge, Image, AspectRatio, Button } from '@chakra-ui/react';
+import { Box, VStack, HStack, Text, Badge, Image, AspectRatio } from '@chakra-ui/react';
+import Button from './Button';
 
 function MovieCard({ movie, variant = 'default', rank, onViewDetails, onAddToWatchlist, onSetReminder }) {
     const isUpcoming = variant === 'upcoming';
-    const [isHovered, setIsHovered] = useState(false);
-    
+
     return (
         <Box
             bg="white"
             borderRadius="4px"
             overflow="hidden"
-            border="1px solid"
-            borderColor={isUpcoming ? 'black' : 'gray.200'}
+            border="2px solid black"
             position="relative"
             transition="all 0.2s"
-            onMouseEnter={() => setIsHovered(true)}
-            onMouseLeave={() => setIsHovered(false)}
             _hover={{
                 transform: 'translateY(-4px)',
-                boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
-                borderColor: 'black',
+                boxShadow: '0 6px 20px rgba(0, 0, 0, 0.15)',
             }}
+            h="100%"
+            display="flex"
+            flexDirection="column"
         >
             {rank !== undefined && (
                 <Box
@@ -68,78 +66,31 @@ function MovieCard({ movie, variant = 'default', rank, onViewDetails, onAddToWat
                         Coming Soon
                     </Badge>
                 )}
-                <Box
-                    position="absolute"
-                    bottom={0}
-                    left={0}
-                    right={0}
-                    bgGradient="linear(to-t, blackAlpha.700, transparent)"
-                    p={4}
-                    opacity={isHovered ? 1 : 0}
-                    transition="opacity 0.2s"
-                >
-                    {!isUpcoming && movie.rating && (
-                        <Text color="white" fontWeight={500}>
-                            {movie.rating}
-                        </Text>
-                    )}
-                    {isUpcoming && movie.genre && (
-                        <Text color="white" fontWeight={500} fontSize="0.85rem">
-                            {movie.genre}
-                        </Text>
-                    )}
-                </Box>
             </Box>
-            <VStack spacing={3} p={6} align="stretch">
-                <Text fontWeight={600} fontSize="1.2rem" lineHeight="1.3">
+            <VStack spacing={3} p={4} align="center" flex={1} justify="space-between">
+                <Text fontWeight={600} fontSize="1.1rem" textAlign="center">
                     {movie.title}
                 </Text>
-                <HStack justify="space-between" fontSize="0.9rem">
-                    {!isUpcoming && (
-                        <>
-                            <Text fontWeight={600} fontSize="1rem">
-                                {movie.revenue}
-                            </Text>
-                            <Text color="gray.600">{movie.releaseDate}</Text>
-                        </>
-                    )}
-                    {isUpcoming && movie.releaseDate && (
-                        <Text fontWeight={500} fontSize="0.9rem">
-                            {new Date(movie.releaseDate).toLocaleDateString('en-IN', { 
-                                year: 'numeric', 
-                                month: 'long', 
-                                day: 'numeric' 
-                            })}
-                        </Text>
-                    )}
-                </HStack>
                 {!isUpcoming && (
-                    <Button
-                        variant="primary"
-                        size="sm"
-                        onClick={onViewDetails}
-                        w="100%"
-                    >
-                        View Details
-                    </Button>
+                    <VStack spacing={2} w="100%">
+                        <Text fontWeight={500} color="gray.600" textAlign="center">
+                            {movie.revenue}
+                        </Text>
+                        <Text color="gray.500" fontSize="0.85rem" textAlign="center">
+                            {movie.releaseDate}
+                        </Text>
+                        <Button variant="primary" size="sm" w="100%" onClick={onViewDetails}>
+                            View Details
+                        </Button>
+                    </VStack>
                 )}
                 {isUpcoming && (
-                    <HStack spacing={2}>
-                        <Button
-                            variant="primary"
-                            size="sm"
-                            onClick={onAddToWatchlist}
-                            flex={1}
-                        >
-                            Add to Watchlist
+                    <HStack spacing={2} w="100%">
+                        <Button variant="primary" size="sm" onClick={onAddToWatchlist} flex={1}>
+                            Watchlist
                         </Button>
-                        <Button
-                            variant="secondary"
-                            size="sm"
-                            onClick={onSetReminder}
-                            flex={1}
-                        >
-                            Set Reminder
+                        <Button variant="secondary" size="sm" onClick={onSetReminder} flex={1}>
+                            Remind
                         </Button>
                     </HStack>
                 )}

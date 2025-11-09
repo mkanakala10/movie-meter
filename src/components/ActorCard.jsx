@@ -6,15 +6,16 @@ function ActorCard({ actor }) {
             bg="white"
             borderRadius="4px"
             overflow="hidden"
-            border="1px solid"
-            borderColor="gray.200"
+            border="2px solid black"
             cursor="pointer"
             transition="all 0.2s"
             _hover={{
                 transform: 'translateY(-4px)',
-                boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
-                borderColor: 'black',
+                boxShadow: '0 6px 20px rgba(0, 0, 0, 0.15)',
             }}
+            h="100%"
+            display="flex"
+            flexDirection="column"
         >
             <Box position="relative">
                 <AspectRatio ratio={2 / 3}>
@@ -40,13 +41,13 @@ function ActorCard({ actor }) {
                     {actor.trendingScore}%
                 </Badge>
             </Box>
-            <VStack spacing={1} p={4} align="stretch">
-                <Text fontWeight={600} fontSize="1rem">
+            <VStack spacing={1} p={4} align="center" flex={1} justify="center">
+                <Text fontWeight={600} fontSize="1rem" textAlign="center">
                     {actor.name}
                 </Text>
                 <HStack spacing={1}>
                     <Text fontSize="0.9rem">↑</Text>
-                    <Text fontSize="0.8rem" color="black" fontWeight={400}>
+                    <Text fontSize="0.8rem" color="gray.600" fontWeight={400}>
                         Trending
                     </Text>
                 </HStack>
