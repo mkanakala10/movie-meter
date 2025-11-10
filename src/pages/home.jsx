@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Box, Container } from '@chakra-ui/react';
+import Header from '../components/Header';
 import Hero from '../components/Hero';
 import SectionHeader from '../components/SectionHeader';
 import ActorCard from '../components/ActorCard';
@@ -49,23 +50,37 @@ function Home() {
                 onNavigate={setCurrentPage}
             />
             
+            <Header />
             <Hero stats={heroStats} />
 
             {/* Trending Actors Section */}
-            <Box as="section" py={20} bg="white">
-                <Container maxW="1400px">
+            <Box 
+                as="section" 
+                py={{ base: 12, md: 16, lg: 20 }} 
+                bg="white"
+            >
+                <Container maxW="container.xl">
                     <SectionHeader 
                         title="Trending Actors" 
                         subtitle="Most popular actors based on real-time engagement" 
                     />
                     <Box 
                         display="grid" 
-                        gridTemplateColumns={{ base: "repeat(2, 1fr)", sm: "repeat(3, 1fr)", md: "repeat(4, 1fr)", lg: "repeat(5, 1fr)" }}
-                        gap="2px"
+                        gridTemplateColumns={{ 
+                            base: "repeat(2, 1fr)", 
+                            sm: "repeat(3, 1fr)", 
+                            md: "repeat(4, 1fr)", 
+                            lg: "repeat(5, 1fr)" 
+                        }}
+                        gap={{ base: 2, md: 4 }}
                         justifyItems="center"
                     >
                         {trendingActors.map((actor) => (
-                            <Box key={actor.id} w="100%" maxW="220px">
+                            <Box 
+                                key={actor.id} 
+                                w="100%" 
+                                maxW={{ base: "100%", sm: "200px", md: "220px" }}
+                            >
                                 <ActorCard actor={actor} />
                             </Box>
                         ))}
@@ -74,20 +89,34 @@ function Home() {
             </Box>
 
             {/* Box Office Leaders Section */}
-            <Box as="section" py={20} bg="gray.50">
-                <Container maxW="1400px">
+            <Box 
+                as="section" 
+                py={{ base: 12, md: 16, lg: 20 }} 
+                bg="gray.50"
+            >
+                <Container maxW="container.xl">
                     <SectionHeader 
                         title="Box Office Leaders" 
                         subtitle="Top grossing Indian films of all time" 
                     />
                     <Box 
                         display="grid" 
-                        gridTemplateColumns={{ base: "repeat(1, 1fr)", sm: "repeat(2, 1fr)", md: "repeat(3, 1fr)", lg: "repeat(4, 1fr)", xl: "repeat(5, 1fr)" }}
-                        gap="2px"
+                        gridTemplateColumns={{ 
+                            base: "repeat(1, 1fr)", 
+                            sm: "repeat(2, 1fr)", 
+                            md: "repeat(3, 1fr)", 
+                            lg: "repeat(4, 1fr)", 
+                            xl: "repeat(5, 1fr)" 
+                        }}
+                        gap={{ base: 2, md: 4 }}
                         justifyItems="center"
                     >
                         {boxOfficeLeaders.map((movie, index) => (
-                            <Box key={movie.id} w="100%" maxW="220px">
+                            <Box 
+                                key={movie.id} 
+                                w="100%" 
+                                maxW={{ base: "100%", sm: "200px", md: "220px" }}
+                            >
                                 <MovieCard movie={movie} rank={index + 1} />
                             </Box>
                         ))}
@@ -96,20 +125,33 @@ function Home() {
             </Box>
 
             {/* Upcoming Films Section */}
-            <Box as="section" py={20} bg="white">
-                <Container maxW="1400px">
+            <Box 
+                as="section" 
+                py={{ base: 12, md: 16, lg: 20 }} 
+                bg="white"
+            >
+                <Container maxW="container.xl">
                     <SectionHeader 
                         title="Upcoming Releases" 
                         subtitle="Most anticipated films coming soon" 
                     />
                     <Box 
                         display="grid" 
-                        gridTemplateColumns={{ base: "repeat(1, 1fr)", sm: "repeat(2, 1fr)", md: "repeat(3, 1fr)", lg: "repeat(4, 1fr)" }}
-                        gap="2px"
+                        gridTemplateColumns={{ 
+                            base: "repeat(1, 1fr)", 
+                            sm: "repeat(2, 1fr)", 
+                            md: "repeat(3, 1fr)", 
+                            lg: "repeat(4, 1fr)" 
+                        }}
+                        gap={{ base: 2, md: 4 }}
                         justifyItems="center"
                     >
                         {upcomingFilms.map((film) => (
-                            <Box key={film.id} w="100%" maxW="220px">
+                            <Box 
+                                key={film.id} 
+                                w="100%" 
+                                maxW={{ base: "100%", sm: "200px", md: "220px" }}
+                            >
                                 <MovieCard movie={film} variant="upcoming" />
                             </Box>
                         ))}
