@@ -6,12 +6,8 @@ import SectionHeader from '../components/SectionHeader';
 import ActorCard from '../components/ActorCard';
 import MovieCard from '../components/MovieCard';
 import CTA from '../components/CTA';
-import Navbar from '../components/Navbar';
 
 function Home() {
-    const [isNavOpen, setIsNavOpen] = useState(false);
-    const [currentPage, setCurrentPage] = useState('home');
-
     const [trendingActors] = useState([
         { id: 1, name: 'Rajkummar Rao', image: 'https://via.placeholder.com/200x300?text=Rajkummar+Rao', trendingScore: 95 },
         { id: 2, name: 'Alia Bhatt', image: 'https://via.placeholder.com/200x300?text=Alia+Bhatt', trendingScore: 92 },
@@ -43,13 +39,6 @@ function Home() {
 
     return (
         <Box minH="100vh" bg="white" color="black">
-            <Navbar
-                isOpen={isNavOpen}
-                onToggle={() => setIsNavOpen(!isNavOpen)}
-                currentPage={currentPage}
-                onNavigate={setCurrentPage}
-            />
-            
             <Header />
             <Hero stats={heroStats} />
 
