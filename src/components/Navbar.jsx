@@ -11,7 +11,7 @@ import {
 
 function Navbar({ isOpen, onToggle, currentPage, onNavigate }) {
     const navItems = [
-        { id: 'home', label: 'Home', icon: HiHome },
+        { id: 'home', label: 'Home', icon: HiHome},
         { id: 'trending', label: 'Trending', icon: HiTrendingUp },
         { id: 'ai-assistant', label: 'AI Assistant', icon: HiSparkles },
         { id: 'watch-later', label: 'Watch Later', icon: HiBookmark },
