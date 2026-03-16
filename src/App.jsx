@@ -2,8 +2,11 @@ import { useState } from 'react';
 import { ChakraProvider } from '@chakra-ui/react';
 import system from './theme';
 import Home from './pages/home';
+import Trending from './pages/trending';
+import WatchLater from './pages/watchLater';
 import MovieMeterChatbot from './components/MovieMeterChatbot';
 import Navbar from './components/Navbar';
+import { WatchLaterProvider } from './contexts/WatchLaterContext';
 
 function App() {
   const [isNavOpen, setIsNavOpen] = useState(false);
@@ -25,9 +28,9 @@ function App() {
       case 'ai-assistant':
         return <MovieMeterChatbot />;
       case 'trending':
-        return <div style={{ padding: '40px' }}>Trending Page - Coming Soon</div>;
+        return <Trending />;
       case 'watch-later':
-        return <div style={{ padding: '40px' }}>Watch Later Page - Coming Soon</div>;
+        return <WatchLater />;
       case 'actors':
         return <div style={{ padding: '40px' }}>Actors Page - Coming Soon</div>;
       case 'movie-details':
@@ -39,19 +42,21 @@ function App() {
 
   return (
     <ChakraProvider value={system}>
-      <div style={{ position: 'relative', minHeight: '100vh' }}>
-        <Navbar 
-          isOpen={isNavOpen} 
-          onToggle={handleToggleNav}
-          currentPage={currentPage}
-          onNavigate={handleNavigate}
-        />
-        
-        {/* Main content area */}
-        <div>
-          {renderPage()}
+      <WatchLaterProvider>
+        <div style={{ position: 'relative', minHeight: '100vh' }}>
+          <Navbar 
+            isOpen={isNavOpen} 
+            onToggle={handleToggleNav}
+            currentPage={currentPage}
+            onNavigate={handleNavigate}
+          />
+          
+          {/* Main content area */}
+          <div>
+            {renderPage()}
+          </div>
         </div>
-      </div>
+      </WatchLaterProvider>
     </ChakraProvider>
   );
 }

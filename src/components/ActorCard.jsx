@@ -3,15 +3,15 @@ import { Box, VStack, HStack, Text, Badge, Image, AspectRatio } from '@chakra-ui
 function ActorCard({ actor }) {
     return (
         <Box
-            bg="white"
+            bg="linear-gradient(135deg, #16213e, #0f3460)"
             borderRadius="4px"
             overflow="hidden"
-            border="2px solid black"
+            border="2px solid #2196f3"
             cursor="pointer"
             transition="all 0.2s"
             _hover={{
                 transform: 'translateY(-4px)',
-                boxShadow: '0 6px 20px rgba(0, 0, 0, 0.15)',
+                boxShadow: '0 6px 20px rgba(33, 150, 243, 0.5)',
             }}
             h="100%"
             display="flex"
@@ -30,13 +30,14 @@ function ActorCard({ actor }) {
                     position="absolute"
                     top={2}
                     right={2}
-                    bg="black"
+                    bg="linear-gradient(135deg, #2196f3, #1976d2)"
                     color="white"
                     px={2}
                     py={1}
                     borderRadius="2px"
                     fontSize="0.75rem"
                     fontWeight={600}
+                    border="1px solid #64b5f6"
                 >
                     {actor.trendingScore}%
                 </Badge>
@@ -47,7 +48,7 @@ function ActorCard({ actor }) {
                 </Text>
                 <HStack spacing={1}>
                     <Text fontSize="0.9rem">↑</Text>
-                    <Text fontSize="0.8rem" color="gray.600" fontWeight={400}>
+                    <Text fontSize="0.8rem" color="#90caf9" fontWeight={400}>
                         Trending
                     </Text>
                 </HStack>

@@ -1,99 +1,157 @@
 import { Box, VStack, HStack, Text, Badge, Image, AspectRatio } from '@chakra-ui/react';
 import Button from './Button';
 
-function MovieCard({ movie, variant = 'default', rank, onViewDetails, onAddToWatchlist, onSetReminder }) {
+function MovieCard({
+    movie,
+    variant = 'default',
+    rank,
+    onViewDetails,
+    onAddToWatchlist,
+    onRemoveFromWatchlist,
+    isInWatchlist,
+    onSetReminder,
+}) {
     const isUpcoming = variant === 'upcoming';
+
+    const handleAddToWatchlist = () => {
+        if (!onAddToWatchlist) return;
+        // Allow callbacks that accept a movie object or no args
+        if (onAddToWatchlist.length > 0) {
+            onAddToWatchlist(movie);
+        } else {
+            onAddToWatchlist();
+        }
+    };
+
+    const handleRemoveFromWatchlist = () => {
+        if (!onRemoveFromWatchlist) return;
+        if (onRemoveFromWatchlist.length > 0) {
+            onRemoveFromWatchlist(movie.id);
+        } else {
+            onRemoveFromWatchlist();
+        }
+    };
+
+    const watchlistAction = isInWatchlist ? handleRemoveFromWatchlist : handleAddToWatchlist;
+    const watchlistLabel = isInWatchlist ? 'Remove' : 'Watchlist';
+    const watchlistVariant = isInWatchlist ? 'secondary' : 'primary';
 
     return (
         <Box
-            bg="white"
-            borderRadius="4px"
+            bg="rgba(22, 33, 62, 0.8)" // Slightly transparent for a cleaner look
+            borderRadius="lg" // Smoother corners
             overflow="hidden"
-            border="2px solid black"
+            border="1px solid" // Thinner border is often "cleaner"
+            borderColor="blue.500"
             position="relative"
-            transition="all 0.2s"
+            transition="all 0.3s ease"
             _hover={{
-                transform: 'translateY(-4px)',
-                boxShadow: '0 6px 20px rgba(0, 0, 0, 0.15)',
+                transform: 'translateY(-8px)',
+                boxShadow: '0 10px 30px rgba(33, 150, 243, 0.3)',
+                borderColor: 'blue.300',
             }}
             h="100%"
             display="flex"
             flexDirection="column"
         >
+            {/* Rank Badge */}
             {rank !== undefined && (
                 <Box
                     position="absolute"
-                    top={3}
-                    left={3}
-                    bg="black"
+                    top={2}
+                    left={2}
+                    bg="blue.500"
                     color="white"
-                    w={10}
-                    h={10}
-                    borderRadius="2px"
-                    display="flex"
-                    alignItems="center"
-                    justifyContent="center"
-                    fontSize="1.2rem"
-                    fontWeight={700}
-                    zIndex={2}
+                    px={2}
+                    py={1}
+                    borderRadius="md"
+                    fontSize="xs"
+                    fontWeight="bold"
+                    zIndex={3}
+                    boxShadow="md"
                 >
                     #{rank}
                 </Box>
             )}
-            <Box position="relative">
+
+            <Box position="relative" overflow="hidden">
                 <AspectRatio ratio={2 / 3}>
                     <Image
                         src={movie.image}
                         alt={movie.title}
                         objectFit="cover"
-                        bg="gray.100"
+                        transition="transform 0.5s"
+                        _hover={{ transform: 'scale(1.05)' }} 
                     />
                 </AspectRatio>
+                
                 {isUpcoming && (
                     <Badge
                         position="absolute"
-                        top={3}
-                        right={3}
-                        bg="black"
-                        color="white"
-                        px={3}
-                        py={1.5}
-                        borderRadius="2px"
-                        fontSize="0.75rem"
-                        fontWeight={600}
+                        top={2}
+                        right={2}
+                        colorScheme="blue"
+                        variant="solid"
+                        fontSize="0.65rem"
                         zIndex={2}
                     >
                         Coming Soon
                     </Badge>
                 )}
             </Box>
-            <VStack spacing={3} p={4} align="center" flex={1} justify="space-between">
-                <Text fontWeight={600} fontSize="1.1rem" textAlign="center">
-                    {movie.title}
-                </Text>
-                {!isUpcoming && (
-                    <VStack spacing={2} w="100%">
-                        <Text fontWeight={500} color="gray.600" textAlign="center">
-                            {movie.revenue}
+
+            <VStack p={4} spacing={3} flex={1} justify="space-between" align="center">
+                <VStack spacing={1} w="100%">
+                    <Text 
+                        fontWeight="bold" 
+                        fontSize="md" 
+                        textAlign="center" 
+                        noOfLines={1} 
+                        color="white"
+                    >
+                        {movie.title}
+                    </Text>
+                    
+                    {isUpcoming && movie.genre && (
+                        <Text color="gray.400" fontSize="xs" textAlign="center">
+                            {movie.genre}
                         </Text>
-                        <Text color="gray.500" fontSize="0.85rem" textAlign="center">
-                            {movie.releaseDate}
-                        </Text>
+                    )}
+                    
+                    {!isUpcoming && (
+                        <>
+                            <Text fontWeight="bold" color="blue.300" fontSize="sm" textAlign="center">
+                                {movie.revenue}
+                            </Text>
+                            <Text color="gray.400" fontSize="xs" textAlign="center">
+                                {movie.releaseDate}
+                            </Text>
+                        </>
+                    )}
+                </VStack>
+
+                {/* Action Buttons */}
+                <Box w="100%">
+                    {!isUpcoming ? (
                         <Button variant="primary" size="sm" w="100%" onClick={onViewDetails}>
                             View Details
                         </Button>
-                    </VStack>
-                )}
-                {isUpcoming && (
-                    <HStack spacing={2} w="100%">
-                        <Button variant="primary" size="sm" onClick={onAddToWatchlist} flex={1}>
-                            Watchlist
-                        </Button>
-                        <Button variant="secondary" size="sm" onClick={onSetReminder} flex={1}>
-                            Remind
-                        </Button>
-                    </HStack>
-                )}
+                    ) : (
+                        <HStack spacing={2} w="100%">
+                            <Button
+                                variant={watchlistVariant}
+                                size="xs"
+                                onClick={watchlistAction}
+                                flex={1}
+                            >
+                                {watchlistLabel}
+                            </Button>
+                            <Button variant="secondary" size="xs" onClick={onSetReminder} flex={1}>
+                                Remind
+                            </Button>
+                        </HStack>
+                    )}
+                </Box>
             </VStack>
         </Box>
     );

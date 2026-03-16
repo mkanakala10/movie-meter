@@ -3,7 +3,7 @@ import Button from './Button';
 
 function CTA({ title, description, buttonText = 'Get Started', onButtonClick }) {
     return (
-        <Box as="section" py={20} bg="gray.50" borderTop="2px solid" borderColor="gray.200">
+        <Box as="section" py={20} bg="transparent" borderTop="2px solid" borderColor="#2196f3">
             <Container maxW="600px">
                 <VStack spacing={6} textAlign="center" align="center">
                     <Heading 
@@ -14,7 +14,7 @@ function CTA({ title, description, buttonText = 'Get Started', onButtonClick }) 
                         {title}
                     </Heading>
                     {description && (
-                        <Text fontSize="1.1rem" color="gray.600">
+                        <Text fontSize="1.1rem" color="#90caf9">
                             {description}
                         </Text>
                     )}

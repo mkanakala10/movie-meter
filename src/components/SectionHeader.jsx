@@ -7,11 +7,12 @@ function SectionHeader({ title, subtitle }) {
                 as="h2" 
                 fontSize={{ base: '2rem', md: '2.5rem' }} 
                 fontWeight={700}
+                textAlign="center"
             >
                 {title}
             </Heading>
             {subtitle && (
-                <Text fontSize="1.1rem" color="gray.600" fontWeight={400}>
+                <Text fontSize="1.1rem" color="#90caf9" fontWeight={400}>
                     {subtitle}
                 </Text>
             )}

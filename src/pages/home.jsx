@@ -1,5 +1,14 @@
-import { useState } from 'react';
-import { Box, Container } from '@chakra-ui/react';
+import { useEffect, useState } from 'react';
+import { 
+  Box, 
+  Container, 
+  SimpleGrid, 
+  VStack, 
+  HStack, 
+  Spinner, 
+  Center, 
+  Text 
+} from '@chakra-ui/react';
 import Header from '../components/Header';
 import Hero from '../components/Hero';
 import SectionHeader from '../components/SectionHeader';
@@ -8,151 +17,165 @@ import MovieCard from '../components/MovieCard';
 import CTA from '../components/CTA';
 
 function Home() {
-    const [trendingActors] = useState([
-        { id: 1, name: 'Rajkummar Rao', image: 'https://via.placeholder.com/200x300?text=Rajkummar+Rao', trendingScore: 95 },
-        { id: 2, name: 'Alia Bhatt', image: 'https://via.placeholder.com/200x300?text=Alia+Bhatt', trendingScore: 92 },
-        { id: 3, name: 'Vicky Kaushal', image: 'https://via.placeholder.com/200x300?text=Vicky+Kaushal', trendingScore: 90 },
-        { id: 4, name: 'Deepika Padukone', image: 'https://via.placeholder.com/200x300?text=Deepika+Padukone', trendingScore: 88 },
-        { id: 5, name: 'Ranveer Singh', image: 'https://via.placeholder.com/200x300?text=Ranveer+Singh', trendingScore: 87 },
-    ]);
+    const [trendingActors, setTrendingActors] = useState([]);
+    const [boxOffice, setBoxOffice] = useState([]);
+    const [anticipated, setAnticipated] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
 
-    const [boxOfficeLeaders] = useState([
-        { id: 1, title: 'Animal', image: 'https://via.placeholder.com/300x450?text=Animal', revenue: '₹915 Cr', rating: 4.2, releaseDate: '2023' },
-        { id: 2, title: 'Jawan', image: 'https://via.placeholder.com/300x450?text=Jawan', revenue: '₹1150 Cr', rating: 4.5, releaseDate: '2023' },
-        { id: 3, title: 'Pathaan', image: 'https://via.placeholder.com/300x450?text=Pathaan', revenue: '₹1050 Cr', rating: 4.3, releaseDate: '2023' },
-        { id: 4, title: 'Gadar 2', image: 'https://via.placeholder.com/300x450?text=Gadar+2', revenue: '₹690 Cr', rating: 4.1, releaseDate: '2023' },
-        { id: 5, title: 'RRR', image: 'https://via.placeholder.com/300x450?text=RRR', revenue: '₹1300 Cr', rating: 4.7, releaseDate: '2022' },
-    ]);
+    useEffect(() => {
+        const apiKey = import.meta.env.VITE_TMDB_API_KEY;
+        
+        const fetchHomeData = async () => {
+            setIsLoading(true);
+            try {
+                
+                const actorRes = await fetch(`https://api.themoviedb.org/3/person/popular?api_key=${apiKey}&language=en-US&page=1`);
+                const actorData = await actorRes.json();
+                
+                const indianActors = (actorData.results || [])
+                    .filter(person => 
+                        person.known_for.some(m => m.origin_country?.includes('IN'))
+                    )
+                    .slice(0, 20)
+                    .map(person => ({
+                        id: person.id,
+                        name: person.name,
+                        image: `https://image.tmdb.org/t/p/w500${person.profile_path}`,
+                        trendingScore: Math.round(person.popularity)
+                    }));
+                
+                setTrendingActors(indianActors);
 
-    const [upcomingFilms] = useState([
-        { id: 1, title: 'Kalki 2898 AD', image: 'https://via.placeholder.com/300x450?text=Kalki+2898+AD', releaseDate: '2024-06-27', genre: 'Sci-Fi' },
-        { id: 2, title: 'Singham Again', image: 'https://via.placeholder.com/300x450?text=Singham+Again', releaseDate: '2024-08-15', genre: 'Action' },
-        { id: 3, title: 'Pushpa 2', image: 'https://via.placeholder.com/300x450?text=Pushpa+2', releaseDate: '2024-08-15', genre: 'Action' },
-        { id: 4, title: 'Stree 2', image: 'https://via.placeholder.com/300x450?text=Stree+2', releaseDate: '2024-08-30', genre: 'Horror-Comedy' },
-    ]);
+                
+                const boRes = await fetch(`https://api.themoviedb.org/3/discover/movie?api_key=${apiKey}&region=IN&with_origin_country=IN&primary_release_year=2026&sort_by=revenue.desc`);
+                const boData = await boRes.json();
+                
+                setBoxOffice((boData.results || []).slice(0, 5).map(movie => ({
+                    id: movie.id,
+                    title: movie.title,
+                    image: `https://image.tmdb.org/t/p/w500${movie.poster_path}`,
+                    revenue: movie.revenue > 0 ? `₹${(movie.revenue / 10000000).toFixed(1)} Cr` : 'Blockbuster',
+                    rating: movie.vote_average,
+                    releaseDate: movie.release_date
+                })));
+
+                // 3. Fetch 2026 Most Anticipated (Sorted by Popularity)
+                const antRes = await fetch(`https://api.themoviedb.org/3/discover/movie?api_key=${apiKey}&region=IN&with_origin_country=IN&primary_release_year=2026&sort_by=popularity.desc`);
+                const antData = await antRes.json();
+                
+                setAnticipated((antData.results || []).slice(0, 4).map(movie => ({
+                    id: movie.id,
+                    title: movie.title,
+                    image: `https://image.tmdb.org/t/p/w500${movie.poster_path}`,
+                    releaseDate: movie.release_date,
+                    genre: 'Highly Anticipated'
+                })));
+
+            } catch (err) {
+                console.error("Error fetching homepage data:", err);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        if (apiKey) fetchHomeData();
+    }, []);
 
     const heroStats = [
-        { value: '10K+', label: 'Movies Tracked' },
-        { value: '5K+', label: 'Actors' },
-        { value: '1M+', label: 'User Reviews' },
+        { value: '12K+', label: 'Movies Tracked' },
+        { value: '8K+', label: 'Actors' },
+        { value: '2M+', label: 'User Reviews' },
     ];
 
+    if (isLoading) {
+        return (
+            <Center h="100vh" bg="#1a1a2e">
+                <Spinner size="xl" color="blue.300" thickness="4px" />
+            </Center>
+        );
+    }
+
     return (
-        <Box minH="100vh" bg="white" color="black">
+        <Box 
+            minH="100vh" 
+            bg="linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)" 
+            color="white"
+        >
             <Header />
-            <Hero stats={heroStats} />
+            
+            <Container maxW="container.xl">
+                <VStack spacing={0} align="stretch">
+                    <Hero stats={heroStats} />
 
-            {/* Trending Actors Section */}
-            <Box 
-                as="section" 
-                py={{ base: 12, md: 16, lg: 20 }} 
-                bg="white"
-            >
-                <Container maxW="container.xl">
-                    <SectionHeader 
-                        title="Trending Actors" 
-                        subtitle="Most popular actors based on real-time engagement" 
-                    />
-                    <Box 
-                        display="grid" 
-                        gridTemplateColumns={{ 
-                            base: "repeat(2, 1fr)", 
-                            sm: "repeat(3, 1fr)", 
-                            md: "repeat(4, 1fr)", 
-                            lg: "repeat(5, 1fr)" 
-                        }}
-                        gap={{ base: 2, md: 4 }}
-                        justifyItems="center"
-                    >
-                        {trendingActors.map((actor) => (
-                            <Box 
-                                key={actor.id} 
-                                w="100%" 
-                                maxW={{ base: "100%", sm: "200px", md: "220px" }}
-                            >
-                                <ActorCard actor={actor} />
-                            </Box>
-                        ))}
+                    {/* Trending Actors Carousel */}
+                    <Box as="section" py={12}>
+                        <SectionHeader 
+                            title="Trending Indian Actors" 
+                            subtitle="Most popular stars in 2026 based on recent hits" 
+                            textAlign="center"
+                        />
+                        <HStack 
+                            spacing={6} 
+                            overflowX="auto" 
+                            py={6} 
+                            px={4}
+                            sx={{
+                                '&::-webkit-scrollbar': { display: 'none' },
+                                scrollbarWidth: 'none',
+                                '-ms-overflow-style': 'none',
+                            }}
+                        >
+                            {trendingActors.length > 0 ? (
+                                trendingActors.map((actor) => (
+                                    <Box key={actor.id} minW="180px">
+                                        <ActorCard actor={actor} />
+                                    </Box>
+                                ))
+                            ) : (
+                                <Text w="100%" textAlign="center">Updating trending stars...</Text>
+                            )}
+                        </HStack>
                     </Box>
-                </Container>
-            </Box>
 
-            {/* Box Office Leaders Section */}
-            <Box 
-                as="section" 
-                py={{ base: 12, md: 16, lg: 20 }} 
-                bg="gray.50"
-            >
-                <Container maxW="container.xl">
-                    <SectionHeader 
-                        title="Box Office Leaders" 
-                        subtitle="Top grossing Indian films of all time" 
-                    />
-                    <Box 
-                        display="grid" 
-                        gridTemplateColumns={{ 
-                            base: "repeat(1, 1fr)", 
-                            sm: "repeat(2, 1fr)", 
-                            md: "repeat(3, 1fr)", 
-                            lg: "repeat(4, 1fr)", 
-                            xl: "repeat(5, 1fr)" 
-                        }}
-                        gap={{ base: 2, md: 4 }}
-                        justifyItems="center"
-                    >
-                        {boxOfficeLeaders.map((movie, index) => (
-                            <Box 
-                                key={movie.id} 
-                                w="100%" 
-                                maxW={{ base: "100%", sm: "200px", md: "220px" }}
-                            >
-                                <MovieCard movie={movie} rank={index + 1} />
-                            </Box>
-                        ))}
+                    {/* Box Office Leaders Section */}
+                    <Box as="section" py={12}>
+                        <SectionHeader 
+                            title="2026 Box Office Leaders" 
+                            subtitle="Highest grossing Indian films this year" 
+                            textAlign="center"
+                        />
+                        <SimpleGrid columns={{ base: 1, sm: 2, md: 3, lg: 5 }} spacing={6}>
+                            {boxOffice.map((movie, index) => (
+                                <Box key={movie.id} w="100%">
+                                    <MovieCard movie={movie} rank={index + 1} />
+                                </Box>
+                            ))}
+                        </SimpleGrid>
                     </Box>
-                </Container>
-            </Box>
 
-            {/* Upcoming Films Section */}
-            <Box 
-                as="section" 
-                py={{ base: 12, md: 16, lg: 20 }} 
-                bg="white"
-            >
-                <Container maxW="container.xl">
-                    <SectionHeader 
-                        title="Upcoming Releases" 
-                        subtitle="Most anticipated films coming soon" 
-                    />
-                    <Box 
-                        display="grid" 
-                        gridTemplateColumns={{ 
-                            base: "repeat(1, 1fr)", 
-                            sm: "repeat(2, 1fr)", 
-                            md: "repeat(3, 1fr)", 
-                            lg: "repeat(4, 1fr)" 
-                        }}
-                        gap={{ base: 2, md: 4 }}
-                        justifyItems="center"
-                    >
-                        {upcomingFilms.map((film) => (
-                            <Box 
-                                key={film.id} 
-                                w="100%" 
-                                maxW={{ base: "100%", sm: "200px", md: "220px" }}
-                            >
-                                <MovieCard movie={film} variant="upcoming" />
-                            </Box>
-                        ))}
+                    {/* Most Anticipated Section */}
+                    <Box as="section" py={12}>
+                        <SectionHeader 
+                            title="Most Anticipated 2026" 
+                            subtitle="Films generating the most buzz right now" 
+                            textAlign="center"
+                        />
+                        <SimpleGrid columns={{ base: 1, sm: 2, md: 3, lg: 4 }} spacing={6}>
+                            {anticipated.map((film) => (
+                                <Box key={film.id} w="100%">
+                                    <MovieCard movie={film} variant="upcoming" />
+                                </Box>
+                            ))}
+                        </SimpleGrid>
                     </Box>
-                </Container>
-            </Box>
 
-            <CTA
-                title="Ready to Explore Indian Cinema?"
-                description="Join thousands of movie enthusiasts tracking trends and discovering new films"
-                buttonText="Get Started"
-            />
+                    <CTA 
+                        title="Ready to Dive Deeper?" 
+                        description="Track your favorite stars and never miss a release date in 2026."
+                        buttonText="Explore All Trends" 
+                    />
+                </VStack>
+            </Container>
         </Box>
     );
 }

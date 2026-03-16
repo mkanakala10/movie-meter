@@ -7,14 +7,14 @@ function Hero({ stats = [] }) {
             as="section" 
             py={{ base: 12, md: 16, lg: 20 }} 
             borderBottom="2px solid" 
-            borderColor="gray.200" 
-            bg="white"
+            borderColor="#2196f3" 
+            bg="transparent"
         >
             <Container maxW="container.xl">
                 <VStack spacing={{ base: 4, md: 6 }} align="center" textAlign="center">
                     <Text 
                         fontSize={{ base: 'lg', md: 'xl', lg: '2xl' }} 
-                        color="gray.600" 
+                        color="#90caf9" 
                         fontWeight={400}
                         maxW="3xl"
                     >
@@ -46,8 +46,8 @@ function Hero({ stats = [] }) {
                                 </Text>
                                 <Text 
                                     fontSize={{ base: 'xs', md: 'sm' }} 
-                                    color="gray.600" 
-                                    textTransform="uppercase" 
+                                    color="#90caf9" 
+                                    textTransform="uppercase"
                                     letterSpacing="0.5px"
                                 >
                                     {stat.label}

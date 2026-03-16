@@ -13,6 +13,16 @@ The React Compiler is enabled on this template. See [this documentation](https:/
 
 Note: This will impact Vite dev & build performances.
 
+## IMDb API Configuration
+
+To enable the **Trending** page data source, create a `.env` file in the project root and add your IMDb API key:
+
+```bash
+VITE_IMDB_API_KEY=your_imdb_api_key_here
+```
+
+You can copy `.env.example` as a starting point.
+
 ## Expanding the ESLint configuration
 
 If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
