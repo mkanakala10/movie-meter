@@ -36,7 +36,7 @@ const LANGUAGE_OPTIONS = [
   { label: 'Kannada', value: 'kn' },
 ];
 
-function AllMovies() {
+function AllMovies({ onRate, ratings = {} }) {
   const [movies, setMovies] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -157,11 +157,12 @@ function AllMovies() {
                 {movies.map((movie) => (
                   <Grid item xs={6} sm={4} md={3} lg={2.4} key={movie.id}>
                     <MovieCard
-                      movie={movie}
+                      movie={{ ...movie, ratingValue: ratings[movie.id] || 0 }}
                       variant="upcoming"
                       onAddToWatchlist={() => addToWatchLater(movie)}
                       isInWatchlist={isInWatchLater(movie.id)}
                       onSetReminder={() => {}}
+                      onRate={onRate}
                     />
                   </Grid>
                 ))}

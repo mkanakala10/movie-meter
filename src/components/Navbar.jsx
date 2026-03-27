@@ -2,6 +2,7 @@ import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
+import Divider from '@mui/material/Divider'; // Added for a clean separation
 import {
   HiHome,
   HiTrendingUp,
@@ -10,7 +11,9 @@ import {
   HiUsers,
   HiFilm,
   HiMenu,
+  HiLogout, // Added logout icon
 } from 'react-icons/hi';
+import { useAuth } from '../contexts/AuthContext'; // Import your auth hook
 
 const navItems = [
   { id: 'home', label: 'Home', icon: HiHome },
@@ -22,6 +25,22 @@ const navItems = [
 ];
 
 function Navbar({ isOpen, onToggle, currentPage, onNavigate }) {
+  const { logout, isAuthenticated, user } = useAuth();
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+      
+      if (onToggle) {
+        onToggle(); // Close the sidebar after logout
+      }
+      
+      onNavigate('signup'); // Send them back to the signup/login page
+    } catch (error) {
+      console.error("Logout failed:", error);
+    }
+  };
+
   return (
     <>
       {/* Hamburger button — only when sidebar is closed */}
@@ -71,9 +90,11 @@ function Navbar({ isOpen, onToggle, currentPage, onNavigate }) {
           zIndex: 40,
           transform: isOpen ? 'translateX(0)' : 'translateX(-100%)',
           transition: 'transform 0.3s ease',
+          display: 'flex',
+          flexDirection: 'column', // Stack items vertically
         }}
       >
-        <Stack sx={{ p: 4, pt: 5 }} spacing={0}>
+        <Stack sx={{ p: 4, pt: 5, flexGrow: 1 }} spacing={0}>
           <Typography
             variant="h6"
             fontWeight="bold"
@@ -99,9 +120,9 @@ function Navbar({ isOpen, onToggle, currentPage, onNavigate }) {
                   width: '100%',
                   display: 'flex',
                   alignItems: 'center',
-                  justifyContent: 'center',
+                  justifyContent: 'flex-start', // Left align looks better in sidebars
                   gap: 1.5,
-                  px: 2,
+                  px: 3,
                   py: 1.5,
                   borderRadius: '6px',
                   border: 'none',
@@ -122,6 +143,49 @@ function Navbar({ isOpen, onToggle, currentPage, onNavigate }) {
             );
           })}
         </Stack>
+
+        {/* User Section & Logout Button at the Bottom */}
+        {isAuthenticated && (
+          <Box sx={{ p: 3, borderTop: '1px solid #eee' }}>
+            <Stack spacing={2}>
+              <Box sx={{ px: 1 }}>
+                <Typography variant="body2" color="text.secondary">
+                  Signed in as
+                </Typography>
+                <Typography variant="body1" fontWeight="bold">
+                  {user?.displayName || 'User'}
+                </Typography>
+              </Box>
+              
+              <Box
+                component="button"
+                onClick={handleLogout}
+                sx={{
+                  width: '100%',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 1.5,
+                  px: 2,
+                  py: 1.5,
+                  borderRadius: '6px',
+                  border: '1px solid #ff4444',
+                  cursor: 'pointer',
+                  backgroundColor: 'transparent',
+                  color: '#ff4444',
+                  transition: 'all 0.2s',
+                  '&:hover': {
+                    backgroundColor: '#fff5f5',
+                  },
+                }}
+              >
+                <HiLogout size={20} />
+                <Typography component="span" fontWeight={600} fontSize="0.95rem">
+                  Sign Out
+                </Typography>
+              </Box>
+            </Stack>
+          </Box>
+        )}
       </Box>
     </>
   );

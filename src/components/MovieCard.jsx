@@ -99,6 +99,27 @@ function MovieCard({
             {movie.title}
           </Typography>
 
+          <Box sx={{ display: 'flex', justifyContent: 'center', gap: 0.5 }}>
+            {[1, 2, 3, 4, 5].map((value) => (
+              <Box
+                key={value}
+                component="button"
+                type="button"
+                onClick={() => onRate?.(movie.id, value)}
+                sx={{
+                  border: 'none',
+                  background: 'none',
+                  color: value <= (movie?.ratingValue || 0) ? '#ffb400' : '#cccccc',
+                  fontSize: '1rem',
+                  cursor: 'pointer',
+                  p: 0,
+                }}
+              >
+                {value <= (movie?.ratingValue || 0) ? '★' : '☆'}
+              </Box>
+            ))}
+          </Box>
+
           {isUpcoming && movie.genre && (
             <Typography variant="caption" sx={{ color: 'grey.400', textAlign: 'center', display: 'block' }}>
               {movie.genre}

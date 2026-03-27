@@ -19,7 +19,7 @@ const GENRE_MAP = {
   53: 'Thriller', 10752: 'War', 37: 'Western',
 };
 
-function Trending() {
+function Trending({ onRate, ratings = {} }) {
   const [movies, setMovies] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -97,12 +97,13 @@ function Trending() {
                 {movies.map((movie, index) => (
                   <Grid item xs={12} sm={6} md={4} lg={2.4} key={movie.id}>
                     <MovieCard
-                      movie={movie}
+                      movie={{ ...movie, ratingValue: ratings[movie.id] || 0 }}
                       variant="upcoming"
                       rank={index + 1}
                       onAddToWatchlist={() => addToWatchLater(movie)}
                       onSetReminder={() => {}}
                       isInWatchlist={isInWatchLater(movie.id)}
+                      onRate={onRate}
                     />
                   </Grid>
                 ))}
