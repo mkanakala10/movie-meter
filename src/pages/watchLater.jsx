@@ -1,4 +1,8 @@
-import { Box, Container, SimpleGrid, Text, VStack } from '@chakra-ui/react';
+import Box from '@mui/material/Box';
+import Container from '@mui/material/Container';
+import Grid from '@mui/material/Grid';
+import Stack from '@mui/material/Stack';
+import Typography from '@mui/material/Typography';
 import Header from '../components/Header';
 import SectionHeader from '../components/SectionHeader';
 import MovieCard from '../components/MovieCard';
@@ -9,52 +13,49 @@ function WatchLater() {
 
   return (
     <Box
-      minH="100vh"
-      bg="linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)"
-      color="white"
+      sx={{
+        minHeight: '100vh',
+        background: 'linear-gradient(135deg,#1a1a2e 0%,#16213e 50%,#0f3460 100%)',
+        color: '#fff',
+      }}
     >
       <Header />
-
-      <Container maxW="container.xl">
-        <VStack spacing={0} align="stretch">
-          <Box as="section" py={12} textAlign="center">
+      <Container maxWidth="xl">
+        <Stack spacing={0}>
+          <Box component="section" py={6} textAlign="center">
             <SectionHeader
               title="Watch Later"
-              subtitle="Movies you've marked to watch next. Tap remove to keep your list tidy."
-              textAlign="center"
+              subtitle="Movies you've marked to watch next. Tap Remove to keep your list tidy."
             />
           </Box>
 
           {watchLater.length === 0 ? (
-            <Box py={20} textAlign="center">
-              <Text fontSize="xl" fontWeight="bold" mb={4}>
+            <Box sx={{ py: 10, textAlign: 'center' }}>
+              <Typography fontSize="1.2rem" fontWeight="bold" mb={1}>
                 Your watchlist is empty
-              </Text>
-              <Text color="gray.300">
-                Add movies by tapping the watchlist button on any movie card.
-              </Text>
+              </Typography>
+              <Typography sx={{ color: 'grey.400' }}>
+                Add movies by tapping the Watchlist button on any movie card.
+              </Typography>
             </Box>
           ) : (
-            <Box as="section" py={8}>
-              <SimpleGrid
-                columns={{ base: 1, sm: 2, md: 3, lg: 4 }}
-                spacing={{ base: 4, md: 6 }}
-                justifyItems="center"
-              >
+            <Box component="section" pb={8}>
+              <Grid container spacing={3} justifyContent="center">
                 {watchLater.map((movie) => (
-                  <Box key={movie.id} w="100%" maxW="220px">
+                  <Grid item xs={12} sm={6} md={4} lg={3} key={movie.id}>
                     <MovieCard
                       movie={movie}
                       variant="upcoming"
                       isInWatchlist
                       onRemoveFromWatchlist={() => removeFromWatchLater(movie.id)}
+                      onSetReminder={() => {}}
                     />
-                  </Box>
+                  </Grid>
                 ))}
-              </SimpleGrid>
+              </Grid>
             </Box>
           )}
-        </VStack>
+        </Stack>
       </Container>
     </Box>
   );

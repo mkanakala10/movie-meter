@@ -1,12 +1,23 @@
 import { useEffect, useState } from 'react';
-import { Alert, AlertIndicator, Box, Center, Container, SimpleGrid, Spinner, VStack, Text } from '@chakra-ui/react';
+import Box from '@mui/material/Box';
+import Container from '@mui/material/Container';
+import Grid from '@mui/material/Grid';
+import Stack from '@mui/material/Stack';
+import Typography from '@mui/material/Typography';
+import CircularProgress from '@mui/material/CircularProgress';
+import Alert from '@mui/material/Alert';
 import Header from '../components/Header';
 import SectionHeader from '../components/SectionHeader';
 import MovieCard from '../components/MovieCard';
 import { useWatchLater } from '../contexts/WatchLaterContext';
 
-
-const GENRE_MAP = { 28: 'Action', 12: 'Adventure', 16: 'Animation', 35: 'Comedy', 80: 'Crime', 99: 'Documentary', 18: 'Drama', 10751: 'Family', 14: 'Fantasy', 36: 'History', 27: 'Horror', 10402: 'Music', 9648: 'Mystery', 10749: 'Romance', 878: 'Sci-Fi', 10770: 'TV Movie', 53: 'Thriller', 10752: 'War', 37: 'Western' };
+const GENRE_MAP = {
+  28: 'Action', 12: 'Adventure', 16: 'Animation', 35: 'Comedy',
+  80: 'Crime', 99: 'Documentary', 18: 'Drama', 10751: 'Family',
+  14: 'Fantasy', 36: 'History', 27: 'Horror', 10402: 'Music',
+  9648: 'Mystery', 10749: 'Romance', 878: 'Sci-Fi', 10770: 'TV Movie',
+  53: 'Thriller', 10752: 'War', 37: 'Western',
+};
 
 function Trending() {
   const [movies, setMovies] = useState([]);
@@ -29,67 +40,80 @@ function Trending() {
         const url = `https://api.themoviedb.org/3/discover/movie?api_key=${apiKey}&region=IN&with_origin_country=IN&primary_release_year=2026&sort_by=popularity.desc`;
         const res = await fetch(url);
         const data = await res.json();
-
         if (!res.ok) throw new Error(data.status_message || 'Failed to fetch movies');
 
-        const topTen = (data.results || []).slice(0, 10).map((item) => ({
-          id: item.id,
-          title: item.title,
-          image: item.poster_path ? `https://image.tmdb.org/t/p/w500${item.poster_path}` : 'https://via.placeholder.com/300x450?text=No+Poster',
-          releaseDate: item.release_date || '2026-TBA',
-          
-          genre: GENRE_MAP[item.genre_ids?.[0]] || 'Indian Cinema',
-        }));
-
-        setMovies(topTen);
+        setMovies(
+          (data.results || []).slice(0, 10).map((item) => ({
+            id: item.id,
+            title: item.title,
+            image: item.poster_path
+              ? `https://image.tmdb.org/t/p/w500${item.poster_path}`
+              : 'https://via.placeholder.com/300x450?text=No+Poster',
+            releaseDate: item.release_date || '2026-TBA',
+            genre: GENRE_MAP[item.genre_ids?.[0]] || 'Indian Cinema',
+          }))
+        );
       } catch (fetchError) {
         setError(fetchError.message || 'Unable to load trending movies.');
       } finally {
         setIsLoading(false);
       }
     };
+
     fetchTrending();
   }, []);
 
   return (
-    <Box minH="100vh" bg="linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)" color="white">
+    <Box
+      sx={{
+        minHeight: '100vh',
+        background: 'linear-gradient(135deg,#1a1a2e 0%,#16213e 50%,#0f3460 100%)',
+        color: '#fff',
+      }}
+    >
       <Header />
-      <Container maxW="container.xl">
-        <VStack spacing={0} align="stretch">
-          <Box as="section" py={12} textAlign="center">
-            <SectionHeader 
-               title="Top 10 Trending Indian Movies (2026)" 
-               subtitle="The most anticipated releases in India this year, powered by TMDb." 
+      <Container maxWidth="xl">
+        <Stack spacing={0}>
+          <Box component="section" py={6} textAlign="center">
+            <SectionHeader
+              title="Top 10 Trending Indian Movies (2026)"
+              subtitle="The most anticipated releases in India this year, powered by TMDb."
             />
           </Box>
 
           {error && (
-            <Box px={4} py={4}><Alert status="error" borderRadius="lg" color="black"><AlertIndicator />{error}</Alert></Box>
+            <Box px={2} pb={3}>
+              <Alert severity="error">{error}</Alert>
+            </Box>
           )}
 
           {isLoading ? (
-            <Center py={20}><Spinner size="xl" color="blue.300" thickness="4px" /></Center>
+            <Box sx={{ display: 'flex', justifyContent: 'center', py: 10 }}>
+              <CircularProgress size={56} sx={{ color: '#64b5f6' }} thickness={4} />
+            </Box>
           ) : movies.length > 0 ? (
-            <Box as="section" py={8}>
-              <SimpleGrid columns={{ base: 1, sm: 2, md: 3, lg: 5 }} spacing={{ base: 4, md: 6 }} justifyItems="center">
+            <Box component="section" pb={8}>
+              <Grid container spacing={3} justifyContent="center">
                 {movies.map((movie, index) => (
-                  <Box key={movie.id} w="100%" maxW="220px">
+                  <Grid item xs={12} sm={6} md={4} lg={2.4} key={movie.id}>
                     <MovieCard
                       movie={movie}
                       variant="upcoming"
                       rank={index + 1}
                       onAddToWatchlist={() => addToWatchLater(movie)}
-                      onSetReminder={() => console.log(`Reminder set for: ${movie.title}`)}
+                      onSetReminder={() => {}}
                       isInWatchlist={isInWatchLater(movie.id)}
                     />
-                  </Box>
+                  </Grid>
                 ))}
-              </SimpleGrid>
+              </Grid>
             </Box>
           ) : (
-            <Center py={20}><Text fontSize="xl">No upcoming movies found for 2026 yet!</Text></Center>
+            <Box sx={{ display: 'flex', justifyContent: 'center', py: 10 }}>
+              <Typography fontSize="1.2rem">No upcoming movies found for 2026 yet!</Typography>
+            </Box>
           )}
-        </VStack>
+        </Stack>
       </Container>
     </Box>
   );

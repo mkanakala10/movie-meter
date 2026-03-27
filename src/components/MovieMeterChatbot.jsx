@@ -13,8 +13,7 @@ export default function MovieMeterChatbot() {
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef(null);
 
-  // Add your Gemini API key here
-  const GEMINI_API_KEY = 'YOUR_API_KEY_HERE';
+  const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY || '';
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -33,9 +32,22 @@ export default function MovieMeterChatbot() {
     setMessages(prev => [...prev, { role: 'user', content: userMessage }]);
     setIsLoading(true);
 
+    if (!GEMINI_API_KEY) {
+      setMessages((prev) => [
+        ...prev,
+        {
+          role: 'assistant',
+          content:
+            '🎬 No Gemini API key found. Please add VITE_GEMINI_API_KEY to your .env file to enable the AI assistant.',
+        },
+      ]);
+      setIsLoading(false);
+      return;
+    }
+
     try {
       const response = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${GEMINI_API_KEY}`,
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_API_KEY}`,
         {
           method: 'POST',
           headers: {
